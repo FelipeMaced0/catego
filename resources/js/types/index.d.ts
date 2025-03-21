@@ -36,3 +36,16 @@ export interface User {
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
+
+
+export interface CategoriaItem {
+    id?: number;
+    pai_id?: number;
+    nome: string;
+    descricao: string;
+    sub_categorias?: CategoriaItem[]
+    created_at?: string;
+    updated_at?: string;
+}
+
+export type ItemCategoriaType = CategoriaItem;
