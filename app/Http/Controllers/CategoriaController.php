@@ -43,9 +43,16 @@ class CategoriaController extends Controller
      */
     public function store(StoreCategoriaRequest $request): JsonResponse
     {
-        $categoria = Categoria::query()->create($request->validated());
-
-        return response()->json($categoria);
+        try{
+        
+            $categoria = Categoria::query()->create($request->validated());
+         
+            return response()->json($categoria);
+        }catch(Exception $e){
+           
+            return response()->json(['message' => 'Erro no servidor'], 500);
+        }
+        
     }
 
     /**
@@ -74,7 +81,7 @@ class CategoriaController extends Controller
 
         try{
             
-            $categoria::query()->update($request->validated());
+            $categoria::query()->update($request->only(['nome', 'descricao']));
 
             response()->json($categoria);
         }catch(Exception $e){
