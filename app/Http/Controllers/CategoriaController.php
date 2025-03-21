@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Str;
 
 class CategoriaController extends Controller
 {
@@ -23,7 +24,8 @@ class CategoriaController extends Controller
     public function list(Request $request): JsonResponse
     {
         
-        $categorias = Categoria::query()->when($request->exists('include'),fn($query)=> $query->with(explode(',', $request->get('include', ''))))
+        
+        $categorias = Categoria::query()->with(Str::of('subCategorias')->append(Str::repeat('.subCategorias', $request->get('profundidade', 10)))->toString())
                 ->whereNull('pai_id')    
                 ->paginate($request->get('perPage', 10), ['*'],'page' ,$request->get('page', 1));
 
@@ -81,9 +83,9 @@ class CategoriaController extends Controller
 
         try{
             
-            $categoria::query()->update($request->only(['nome', 'descricao']));
+            $categoria->update($request->only(['nome', 'descricao']));
 
-            response()->json($categoria);
+            return response()->json($categoria);
         }catch(Exception $e){
             return response()->json(['message' => 'Erro no servidor'], 500);
         }
