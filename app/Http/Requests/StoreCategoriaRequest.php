@@ -22,7 +22,7 @@ class StoreCategoriaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'pai_id' => 'nullable|integer|min:1|categorias:pai_id',
+            'pai_id' => 'nullable|integer|min:1|exists:categorias,id',
             'nome' => 'required|max:180',
             'descricao' => 'required|max:300'
         ];
