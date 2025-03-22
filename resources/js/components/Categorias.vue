@@ -104,6 +104,7 @@ const filtrarCategorias = () => {
 const cadastrarCategoriaSemPai = () => {
     mudarCategoriaPai({ pai_id: undefined, id: undefined, nome: '', descricao: '' });
     mudarExibirModal();
+    getResults();
 }
 
 </script>
