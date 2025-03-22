@@ -7,7 +7,7 @@ const $toast = useToast();
 
 const props = defineProps<{
     exibir: Boolean
-    modo: 'cadastrar' | 'atualizar';
+    modo: string
     funcaoSubmit?: () => {},
     categoria: CategoriaItem,
     categoriaPai: CategoriaItem
@@ -16,30 +16,39 @@ const props = defineProps<{
 
 
 const cadastrarCategoria = async () => {
+    try {
+        const response = await axios.post('/api/categoria', props.categoria);
 
-    const response = await axios.post('/api/categoria', props.categoria);
-    //Adicionando a subcategoria ao pai assim que ela é criada
-    //sem fazer uma busca completa no banco de dados
-    //
-    if (response.status >= 200 && response.status < 300) {
-        $toast.success('Categoria cadastrada!');
+        if (response.status >= 200 && response.status < 300) {
+            $toast.success('Categoria cadastrada!');
+        }
+        //Adicionando a subcategoria ao pai assim que ela é criada
+        //sem fazer uma busca completa no banco de dados
+        //
+        props?.categoriaPai?.sub_categorias?.push(response.data);
+    } catch (e) {
+        $toast.error('Erro ao realizar a requisição!');
     }
-
-    props?.categoriaPai?.sub_categorias?.push(response.data);
 }
 
 const atualizarCategoria = async () => {
-    const response = await axios.put(`/api/categoria/${props.categoria?.id}`, props.categoria);
-    if (response.status >= 200 && response.status < 300) {
-        $toast.success('Categoria atualizada!');
+    try {
+
+
+        const response = await axios.put(`/api/categoria/${props.categoria?.id}`, props.categoria);
+        if (response.status >= 200 && response.status < 300) {
+            $toast.success('Categoria atualizada!');
+        }
+    } catch (e) {
+        $toast.error('Erro ao realizar a requisição!');
     }
 
 }
 
-const submit = async() => {
-    if(props.modo == 'cadastrar'){
+const submit = async () => {
+    if (props.modo == 'cadastrar') {
         cadastrarCategoria();
-    }else if(props.modo == 'atualizar'){
+    } else if (props.modo == 'atualizar') {
         atualizarCategoria();
     }
 }
@@ -57,7 +66,8 @@ const mudarExibirModal = inject('mudarExibirModal');
                 <div
                     class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                        {{ modo == 'cadastrar' ? 'Cadastrar' : 'Atualizar' }} Categoria {{ (modo == 'cadastrar' && categoriaPai.id != null) ? 'em '+categoriaPai.nome : '' }}
+                        {{ modo == 'cadastrar' ? 'Cadastrar' : 'Atualizar' }} Categoria {{ (modo == 'cadastrar' &&
+                            categoriaPai.id != null) ? 'em ' + categoriaPai.nome : '' }}
                     </h3>
                     <button v-on:click="mudarExibirModal"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">

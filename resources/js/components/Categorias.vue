@@ -12,13 +12,18 @@ import Modal from './Modal.vue';
 import axios from 'axios';
 
 
-const categorias = ref({});
+const categorias = ref({data:[]});
 const categoriasFiltradas = ref({ query: '', result: [] });
 const $toast = useToast();
 
 const getResults = async (page = 1) => {
-    const response = await fetch(`/api/categorias?page=${page}`);
-    categorias.value = await response.json();
+    try {
+        const response = await fetch(`/api/categorias?page=${page}`);
+        categorias.value = await response.json();
+    } catch (e) {
+        console.log('Error');
+    }
+
 }
 getResults();
 
@@ -48,13 +53,19 @@ const mudarCategoriaPai = (categoria: CategoriaItem) => {
 
 
 const deletarCategoria = async (id: number) => {
-    const response = await axios.delete(`/api/categoria/${id}`);
-    if (response.status >= 200 && response.status < 300) {
-        $toast.success(response.data.message);
+    try {
+
+
+        const response = await axios.delete(`/api/categoria/${id}`);
+        if (response.status >= 200 && response.status < 300) {
+            $toast.success(response.data.message);
+        }
+
+
+        categorias.value.data = removerObjetoPorId(categorias.value.data, id);
+    } catch (e) {
+        $toast.error('Erro ao realizar a requisição!');
     }
-
-
-    categorias.value.data = removerObjetoPorId(categorias.value.data, id);
 }
 
 provide('deletarCategoria', deletarCategoria);
@@ -65,7 +76,7 @@ provide('mudarCategoriaPai', mudarCategoriaPai);
 
 function removerObjetoPorId(objeto: any, id: Number) {
 
-    return objeto.map(categoria => {
+    return objeto.map((categoria: CategoriaItem) => {
 
         if (categoria.id === id) {
             return null; // Remove o objeto atual
@@ -85,7 +96,7 @@ const filtrarCategorias = () => {
 }
 
 const cadastrarCategoriaSemPai = () => {
-    mudarCategoriaPai({pai_id: undefined, id: undefined, nome:'', descricao:''});
+    mudarCategoriaPai({ pai_id: undefined, id: undefined, nome: '', descricao: '' });
     mudarExibirModal();
 }
 
@@ -95,10 +106,9 @@ const cadastrarCategoriaSemPai = () => {
     <div class="flex flex-col items-center w-[500px] border border-gray-500 rounded-sm shadow-lg p-3">
         <div class="w-full min-h-fit flex flex-row justify-around px-2 borderborder-green-600">
             <div class="flex flex-row w-46 justify-around items-center  border border-gray-500 rounded-sm my-2">
-                <input type="text" class="h-8 w-38" placeholder="Digite algo..." maxlength="80" v-model="categoriasFiltradas.query"
-                    v-on:keydown="filtrarCategorias">
-                    <CIcon class=" hover:cursor-pointer" :icon="cilMagnifyingGlass"
-                    width="25" />
+                <input type="text" class="h-8 w-38" placeholder="Digite algo..." maxlength="80"
+                    v-model="categoriasFiltradas.query" v-on:keydown="filtrarCategorias">
+                <CIcon class=" hover:cursor-pointer" :icon="cilMagnifyingGlass" width="25" />
             </div>
             <div class="flex flex-row w-38 justify-around items-center">
                 Nova Categoria

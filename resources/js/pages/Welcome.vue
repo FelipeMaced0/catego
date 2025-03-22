@@ -2,11 +2,6 @@
 import { Head, Link } from '@inertiajs/vue3';
 import Categorias from '@/components/Categorias.vue';
 
-
-
-
-
-
 </script>
 
 <template>
