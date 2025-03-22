@@ -4,8 +4,7 @@ import { inject, ref } from 'vue';
 import { CIcon } from '@coreui/icons-vue';
 import { cilCaretBottom, cilCaretTop, cilPlus, cilTrash, cilPencil } from '@coreui/icons';
 import 'vue-toast-notification/dist/theme-sugar.css';
-import { deletarCategoria } from './Categorias.vue';
-
+import type {deletarCategoriaType, mudarCategoriaPaiType, mudarCategoriaType, mudarExibirModalType, mudarModoModalType} './Categorias.vue';
 
 const props = defineProps<{
     categoria: ItemCategoriaType;
@@ -21,11 +20,11 @@ const abrirCategoria = () => {
 
 
 
-const deletarCategoria = inject('deletarCategoria');
-const mudarExibirModal = inject('mudarExibirModal');
-const mudarCategoria = inject('mudarCategoria');
-const mudarModoModal = inject('mudarModoModal');
-const mudarCategoriaPai = inject('mudarCategoriaPai');
+const deletarCategoria:deletarCategoriaType = inject('deletarCategoria') ?? ((id: number) => {});
+const mudarExibirModal:mudarExibirModalType = inject('mudarExibirModal') ?? (() => {});
+const mudarCategoria:mudarCategoriaType = inject('mudarCategoria') ?? (() => {});
+const mudarModoModal:mudarModoModalType = inject('mudarModoModal') ?? (() => {});
+const mudarCategoriaPai: mudarCategoriaPaiType = inject('mudarCategoriaPai') ?? (() => {});
 
 const exibirModalCadastrar =  () => {
     mudarModoModal('cadastrar');

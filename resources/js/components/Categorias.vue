@@ -16,6 +16,12 @@ const categorias = ref({data:[]});
 const categoriasFiltradas = ref({ query: '', result: [] });
 const $toast = useToast();
 
+export type deletarCategoriaType = typeof deletarCategoria;
+export type mudarModoModalType = typeof mudarModoModal;
+export type mudarExibirModalType = typeof mudarExibirModal;
+export type mudarCategoriaType = typeof mudarCategoria;
+export type mudarCategoriaPaiType = typeof mudarCategoriaPai;
+
 const getResults = async (page = 1) => {
     try {
         const response = await fetch(`/api/categorias?page=${page}`);
