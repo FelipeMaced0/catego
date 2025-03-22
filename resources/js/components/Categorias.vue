@@ -119,7 +119,7 @@ const cadastrarCategoriaSemPai = () => {
                     <CIcon class=" hover:cursor-pointer" :icon="cilMagnifyingGlass" width="25" />
                 </div>
                 <div class="flex flex-row w-38 justify-around items-center">
-                    Nova Categoria
+                    <div class="hidden md:block">Nova Categoria</div>
                     <CIcon class="text-green-600 hover:cursor-pointer" :icon="cilPlus"
                         v-on:click="cadastrarCategoriaSemPai" width="25" />
                 </div>

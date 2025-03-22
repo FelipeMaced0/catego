@@ -68,7 +68,7 @@ const submit = async () => {
 
 <template>
     
-        <div :class="exibir?'':'hidden'" class="p-4 w-[500px] max-w-2xl max-h-full">
+        <div :class="exibir?'':'hidden'" class="p-4 w-[500px] min-w-[350px]  max-w-2xl max-h-full">
             <!-- Modal content -->
             <div class="bg-white rounded-lg shadow-sm dark:bg-gray-700">
                 <!-- Modal header -->
@@ -90,7 +90,7 @@ const submit = async () => {
                 <div class="p-4 md:p-5 space-y-4">
                     <div class="flex flex-row justify-between w-[400px]">
                         <input type="text" class="w-24" placeholder="Nome" v-model="categoria.nome">
-                        <input type="text" class="w-64" placeholder="Descrição" v-model="categoria.descricao">
+                        <input type="text" class="w-64 min-w-34" placeholder="Descrição" v-model="categoria.descricao">
                     </div>
 
                 </div>
