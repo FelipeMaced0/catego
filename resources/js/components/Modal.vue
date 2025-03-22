@@ -10,10 +10,12 @@ const props = defineProps<{
     modo: string
     funcaoSubmit?: () => {},
     categoria: CategoriaItem,
-    categoriaPai: CategoriaItem
+    categoriaPai?: CategoriaItem
 }>();
 
 
+const mudarExibirModal = inject('mudarExibirModal');
+const getResults = inject('getResults');
 
 const cadastrarCategoria = async () => {
     try {
@@ -25,7 +27,14 @@ const cadastrarCategoria = async () => {
         //Adicionando a subcategoria ao pai assim que ela é criada
         //sem fazer uma busca completa no banco de dados
         //
-        props?.categoriaPai?.sub_categorias?.push(response.data);
+        if(props?.categoriaPai != undefined){
+            props?.categoriaPai?.sub_categorias?.push(response.data);
+        }else{
+            getResults();
+        }
+
+        console.log(props.categoriaPai);
+        
     } catch (e) {
         $toast.error('Erro ao realizar a requisição!');
     }
@@ -53,21 +62,20 @@ const submit = async () => {
     }
 }
 
-const mudarExibirModal = inject('mudarExibirModal');
+
+
 </script>
 
 <template>
-    <div id="default-modal" tabindex="-1" :class="props.exibir ? '' : 'hidden'"
-        class="overflow-y-auto overflow-x-hidden absolute top-0  left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative left-[55%] top-[30%] p-4 w-full max-w-2xl max-h-full">
+    
+        <div :class="exibir?'':'hidden'" class="p-4 w-[500px] max-w-2xl max-h-full">
             <!-- Modal content -->
-            <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+            <div class="bg-white rounded-lg shadow-sm dark:bg-gray-700">
                 <!-- Modal header -->
                 <div
                     class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                        {{ modo == 'cadastrar' ? 'Cadastrar' : 'Atualizar' }} Categoria {{ (modo == 'cadastrar' &&
-                            categoriaPai.id != null) ? 'em ' + categoriaPai.nome : '' }}
+                        {{ modo == 'cadastrar' ? 'Cadastrar' : 'Atualizar' }} Categoria {{ (modo == 'cadastrar' && props.categoriaPai != undefined) ? 'em ' + props.categoriaPai.nome : '' }}
                     </h3>
                     <button v-on:click="mudarExibirModal"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
@@ -80,9 +88,9 @@ const mudarExibirModal = inject('mudarExibirModal');
                 </div>
                 <!-- Modal body -->
                 <div class="p-4 md:p-5 space-y-4">
-                    <div class="flex flex-row justify-around w-[540px]">
-                        <input type="text" placeholder="Nome" v-model="categoria.nome">
-                        <input type="text" placeholder="Descrição" v-model="categoria.descricao">
+                    <div class="flex flex-row justify-between w-[400px]">
+                        <input type="text" class="w-24" placeholder="Nome" v-model="categoria.nome">
+                        <input type="text" class="w-64" placeholder="Descrição" v-model="categoria.descricao">
                     </div>
 
                 </div>
@@ -95,7 +103,6 @@ const mudarExibirModal = inject('mudarExibirModal');
                         class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Cancelar</button>
                 </div>
             </div>
-        </div>
     </div>
 
 </template>

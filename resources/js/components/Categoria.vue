@@ -45,7 +45,8 @@ const exibirModalAtualizar =  () => {
 <template>
     <li>
         <div class="flex flex-row justify-between px-2 w-68 borderborder-cyan-300">
-            {{ categoria?.nome }}
+            <div class="">{{ categoria?.nome }}</div>
+            
             <div class="flex flex-row justify-between px-2 w-24  borderborder-red-600">
                 <CIcon class="text-green-600 hover:cursor-pointer" :icon="cilPlus" v-on:click="exibirModalCadastrar()" width="15" />
                 <CIcon class="text-red-600 hover:cursor-pointer" :icon="cilTrash" v-on:click="deletarCategoria(categoria?.id ?? 0)" width="15" />

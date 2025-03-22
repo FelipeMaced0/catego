@@ -12,7 +12,7 @@ import Modal from './Modal.vue';
 import axios from 'axios';
 
 
-const categorias = ref({data:[]});
+const categorias = ref({ data: [] });
 const categoriasFiltradas = ref({ query: '', result: [] });
 const $toast = useToast();
 
@@ -36,8 +36,8 @@ getResults();
 
 const exibirModal = ref(false);
 const modo = ref("cadastrar");
-const categoriaINT = ref<CategoriaItem>({ nome: '', descricao: '' });
-const categoriaPai = ref<CategoriaItem>({ nome: '', descricao: '' });
+const categoriaFilho = ref<CategoriaItem>({ nome: '', descricao: '' });
+const categoriaPai = ref<CategoriaItem | undefined>({ nome: '', descricao: '' });
 
 const mudarModoModal = (tipo: "cadastrar" | "atualizar") => {
     modo.value = tipo;
@@ -48,10 +48,10 @@ const mudarExibirModal = () => {
 }
 
 const mudarCategoria = (categoria: CategoriaItem) => {
-    categoriaINT.value = categoria;
+    categoriaFilho.value = categoria;
 }
 
-const mudarCategoriaPai = (categoria: CategoriaItem) => {
+const mudarCategoriaPai = (categoria: CategoriaItem | undefined) => {
     categoriaPai.value = categoria;
 }
 
@@ -79,6 +79,7 @@ provide('mudarExibirModal', mudarExibirModal);
 provide('mudarCategoria', mudarCategoria);
 provide('mudarModoModal', mudarModoModal);
 provide('mudarCategoriaPai', mudarCategoriaPai);
+provide('getResults', getResults);
 
 function removerObjetoPorId(objeto: any, id: Number) {
 
@@ -102,39 +103,40 @@ const filtrarCategorias = () => {
 }
 
 const cadastrarCategoriaSemPai = () => {
-    mudarCategoriaPai({ pai_id: undefined, id: undefined, nome: '', descricao: '' });
+    mudarCategoriaPai(undefined);
     mudarExibirModal();
-    getResults();
 }
 
 </script>
 
 <template>
-    <div class="flex flex-col items-center w-[500px] border border-gray-500 rounded-sm shadow-lg p-3">
-        <div class="w-full min-h-fit flex flex-row justify-around px-2 borderborder-green-600">
-            <div class="flex flex-row w-46 justify-around items-center  border border-gray-500 rounded-sm my-2">
-                <input type="text" class="h-8 w-38" placeholder="Digite algo..." maxlength="80"
-                    v-model="categoriasFiltradas.query" v-on:keydown="filtrarCategorias">
-                <CIcon class=" hover:cursor-pointer" :icon="cilMagnifyingGlass" width="25" />
+    <div class="flex flex-col md:flex-row w-[250px] md:w-full min-h-[300px]">
+        <div class="flex flex-col items-center w-[500px] border border-gray-500 rounded-sm shadow-lg p-3">
+            <div class="w-full min-h-fit flex flex-row justify-around px-2 borderborder-green-600">
+                <div class="flex flex-row w-46 justify-around items-center  border border-gray-500 rounded-sm my-2">
+                    <input type="text" class="h-8 w-38" placeholder="Digite algo..." maxlength="80"
+                        v-model="categoriasFiltradas.query" v-on:keydown="filtrarCategorias">
+                    <CIcon class=" hover:cursor-pointer" :icon="cilMagnifyingGlass" width="25" />
+                </div>
+                <div class="flex flex-row w-38 justify-around items-center">
+                    Nova Categoria
+                    <CIcon class="text-green-600 hover:cursor-pointer" :icon="cilPlus"
+                        v-on:click="cadastrarCategoriaSemPai" width="25" />
+                </div>
             </div>
-            <div class="flex flex-row w-38 justify-around items-center">
-                Nova Categoria
-                <CIcon class="text-green-600 hover:cursor-pointer" :icon="cilPlus" v-on:click="cadastrarCategoriaSemPai"
-                    width="25" />
+            <ul class="w-full">
+                <template
+                    v-for="categoria in (categoriasFiltradas.result.length > 0 ? categoriasFiltradas.result : categorias.data)"
+                    :key="categoria.id">
+                    <Categoria :categoria="categoria" />
+                </template>
+            </ul>
+            <div class="mt-2">
+
+                <TailwindPagination :data="categorias" @pagination-change-page="getResults" />
+
             </div>
         </div>
-        <ul class="w-full">
-            <template
-                v-for="categoria in (categoriasFiltradas.result.length > 0 ? categoriasFiltradas.result : categorias.data)"
-                :key="categoria.id">
-                <Categoria :categoria="categoria" />
-            </template>
-        </ul>
-        <div class="mt-2">
-            
-            <TailwindPagination :data="categorias" @pagination-change-page="getResults" />
-            
-        </div>
-        <Modal :exibir="exibirModal" :categoria="categoriaINT" :categoria-pai="categoriaPai" :modo="modo" />
+        <Modal :exibir="exibirModal" :categoria="categoriaFilho" :categoria-pai="categoriaPai" :modo="modo" />
     </div>
 </template>
