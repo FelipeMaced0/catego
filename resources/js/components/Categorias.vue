@@ -3,7 +3,7 @@ import { CategoriaItem, ItemCategoriaType } from '@/types';
 import { provide, ref } from 'vue';
 import CIcon from '@coreui/icons-vue';
 import { cilPlus, cilMagnifyingGlass } from '@coreui/icons';
-import { TailwindPagination } from 'laravel-vue-pagination';
+
 import { useToast } from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
 
@@ -124,7 +124,9 @@ const cadastrarCategoriaSemPai = () => {
             </template>
         </ul>
         <div class="mt-2">
+            <!--
             <TailwindPagination :data="categorias" @pagination-change-page="getResults" />
+            -->
         </div>
         <Modal :exibir="exibirModal" :categoria="categoriaINT" :categoria-pai="categoriaPai" :modo="modo" />
     </div>

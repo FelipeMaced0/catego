@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ItemCategoriaType } from '@/types';
-import axios from 'axios';
 import { inject, ref } from 'vue';
 import { CIcon } from '@coreui/icons-vue';
 import { cilCaretBottom, cilCaretTop, cilPlus, cilTrash, cilPencil } from '@coreui/icons';
