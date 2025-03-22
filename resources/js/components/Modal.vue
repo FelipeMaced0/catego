@@ -68,7 +68,7 @@ const submit = async () => {
 
 <template>
     
-        <div :class="exibir?'':'hidden'" class="p-4 w-[500px] min-w-[350px]  max-w-2xl max-h-full">
+        <div :class="exibir?'':'hidden'" class="w-full p-4 min-w-[300px] max-w-[500px] max-h-full">
             <!-- Modal content -->
             <div class="bg-white rounded-lg shadow-sm dark:bg-gray-700">
                 <!-- Modal header -->

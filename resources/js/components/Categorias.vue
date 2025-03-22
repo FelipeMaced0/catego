@@ -110,16 +110,16 @@ const cadastrarCategoriaSemPai = () => {
 </script>
 
 <template>
-    <div class="flex flex-col md:flex-row w-[250px] md:w-full min-h-[300px]">
-        <div class="flex flex-col items-center w-[500px] border border-gray-500 rounded-sm shadow-lg p-3">
-            <div class="w-full min-h-fit flex flex-row justify-around px-2 borderborder-green-600">
+    <div class="flex flex-col md:flex-row w-full min-h-[300px]">
+        <div class="flex flex-col items-center w-full min-w-[300px] max-w-[500px] border border-gray-500 rounded-sm shadow-lg p-3">
+            <div class="w-full min-w-[300px] min-h-fit flex flex-row justify-around px-2 borderborder-green-600">
                 <div class="flex flex-row w-46 justify-around items-center  border border-gray-500 rounded-sm my-2">
                     <input type="text" class="h-8 w-38" placeholder="Digite algo..." maxlength="80"
                         v-model="categoriasFiltradas.query" v-on:keydown="filtrarCategorias">
                     <CIcon class=" hover:cursor-pointer" :icon="cilMagnifyingGlass" width="25" />
                 </div>
                 <div class="flex flex-row w-38 justify-around items-center">
-                    <div class="hidden md:block">Nova Categoria</div>
+                    <div class="hidden md:block text-[12px]">Nova Categoria</div>
                     <CIcon class="text-green-600 hover:cursor-pointer" :icon="cilPlus"
                         v-on:click="cadastrarCategoriaSemPai" width="25" />
                 </div>
