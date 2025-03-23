@@ -44,10 +44,10 @@ const exibirModalAtualizar = () => {
 
 <template>
     <li>
-        <div class="flex flex-row justify-between px-2 my-2 w-68 borderborder-cyan-300">
-            <div class="">{{ categoria?.nome }}</div>
+        <div class="flex flex-row justify-between px-2 my-2 w-full borderborder-cyan-300">
+            <div class="w-full min-w-40">{{ categoria?.nome }}</div>
 
-            <div class="flex flex-row justify-between px-1 w-36">
+            <div class="flex flex-row flex-grow justify-between px-1">
                 <div class="w-8 h-8 flex justify-center items-center" v-on:click="exibirModalCadastrar()" >
                     <CIcon class="text-green-600 hover:cursor-pointer" :icon="cilPlus"
                         width="15" />

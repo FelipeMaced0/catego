@@ -32,7 +32,7 @@ import Categorias from '@/components/Categorias.vue';
         </header>
         <div
             class="duration-750 starting:opacity-0 flex w-full items-center justify-center opacity-100 transition-opacity lg:grow">
-            <main class="flex w-full max-w-full overflow-hidden rounded-lg lg:max-w-4xl lg:flex-row">
+            <main class="flex w-full max-w-full overflow-scroll rounded-lg lg:max-w-4xl lg:flex-row ">
                 <Categorias/>  
             </main>
         </div>
