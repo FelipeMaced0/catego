@@ -12,6 +12,7 @@ import Modal from './Modal.vue';
 import axios from 'axios';
 
 
+const timer = ref();
 const categorias = ref({ data: [] });
 const categoriasFiltradas = ref({ query: '', result: [] });
 const $toast = useToast();
@@ -98,8 +99,31 @@ function removerObjetoPorId(objeto: any, id: Number) {
     }).filter(Boolean);
 }
 
-const filtrarCategorias = () => {
-    categoriasFiltradas.value.result = categorias?.value?.data?.filter((categoria: CategoriaItem) => categoria.nome.toLowerCase().includes(categoriasFiltradas.value.query.toLowerCase()));
+const textSearch = (e) => {
+    clearTimeout(timer.value)
+
+    timer.value = setTimeout(() => {
+        categoriasFiltradas.value.result = [];
+        filtrarCategorias(categorias.value.data);
+    }, 1000)
+}
+
+
+const filtrarCategorias = (conjunto: Array<CategoriaItem>) => {
+
+
+    if (categoriasFiltradas.value.query != "") {
+        conjunto.forEach((elemento: CategoriaItem) => {
+            if (elemento.nome.toLowerCase().includes(categoriasFiltradas.value.query.toLowerCase())) {
+                categoriasFiltradas.value.result.push(elemento);
+            }
+
+            if (elemento.sub_categorias && elemento.sub_categorias.length > 0) {
+
+                filtrarCategorias(elemento.sub_categorias);
+            }
+        });
+    } 
 }
 
 const cadastrarCategoriaSemPai = () => {
@@ -111,11 +135,12 @@ const cadastrarCategoriaSemPai = () => {
 
 <template>
     <div class="flex flex-col md:flex-row w-full min-h-[300px]">
-        <div class="flex flex-col items-center w-full min-w-[300px] max-w-[500px] border border-gray-500 rounded-sm shadow-lg p-3">
+        <div
+            class="flex flex-col items-center w-full min-w-[300px] max-w-[500px] border border-gray-500 rounded-sm shadow-lg p-3">
             <div class="w-full min-w-[300px] min-h-fit flex flex-row justify-around px-2 borderborder-green-600">
                 <div class="flex flex-row w-46 justify-around items-center  border border-gray-500 rounded-sm my-2">
                     <input type="text" class="h-8 w-38" placeholder="Digite algo..." maxlength="80"
-                        v-model="categoriasFiltradas.query" v-on:keydown="filtrarCategorias">
+                        v-model="categoriasFiltradas.query" v-on:keydown="textSearch">
                     <CIcon class=" hover:cursor-pointer" :icon="cilMagnifyingGlass" width="25" />
                 </div>
                 <div class="flex flex-row w-38 justify-around items-center">
