@@ -88,9 +88,9 @@ const submit = async () => {
                 </div>
                 <!-- Modal body -->
                 <div class="p-4 md:p-5 space-y-4">
-                    <div class="flex flex-row justify-between w-[400px]">
-                        <input type="text" class="w-24" placeholder="Nome" v-model="categoria.nome">
-                        <input type="text" class="w-64 min-w-34" placeholder="Descrição" v-model="categoria.descricao">
+                    <div class="flex flex-col justify-between w-full gap-y-5">
+                        <input type="text" class="w-full h-8" placeholder="Nome" v-model="categoria.nome">
+                        <input type="text" class="w-full h-8" placeholder="Descrição" v-model="categoria.descricao">
                     </div>
 
                 </div>
