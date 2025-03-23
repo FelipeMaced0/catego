@@ -105,7 +105,7 @@ const textSearch = (e) => {
     timer.value = setTimeout(() => {
         categoriasFiltradas.value.result = [];
         filtrarCategorias(categorias.value.data);
-    }, 1000)
+    }, 500)
 }
 
 
