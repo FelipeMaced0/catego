@@ -9,6 +9,9 @@ import { initializeTheme } from './composables/useAppearance';
 import ToastPlugin from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-default.css';
 
+import PrimeVue from 'primevue/config';
+import Aura from '@primeuix/themes/aura';
+
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
     interface ImportMetaEnv {
@@ -32,6 +35,11 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue)
             .use(ToastPlugin)
+            .use(PrimeVue, {
+                theme: {
+                    preset: Aura
+                }
+            })
             .mount(el);
     },
     progress: {
