@@ -49,3 +49,21 @@ export interface CategoriaItem {
 }
 
 export type ItemCategoriaType = CategoriaItem;
+
+export interface Paginacao<T> {
+    current_page: number,
+    data: Array<T>,
+    first_page_url: string,
+    from: number,
+    last_page: number,
+    last_page_url: string,
+    links: Array<any>,
+    next_page_url?: string,
+    path:string,
+    per_page: number,
+    prev_page_url?: string,
+    to: number,
+    total: number
+}
+
+export type PaginacaoType = Paginacao;
