@@ -1,5 +1,6 @@
 import '../css/app.css';
 
+
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import type { DefineComponent } from 'vue';
@@ -11,6 +12,7 @@ import 'vue-toast-notification/dist/theme-default.css';
 
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
+import 'primeicons/primeicons.css'
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
