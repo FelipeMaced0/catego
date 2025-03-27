@@ -1,6 +1,162 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import Categorias from '@/components/Categorias.vue';
+import Nav from '@/components/Nav.vue';
+import BotaoFlutuante from '@/components/BotaoFlutuante.vue';
+import { CategoriaItem, PaginacaoType } from '@/types';
+import { provide, ref } from 'vue';
+import { useToast } from 'vue-toast-notification';
+import axios from 'axios';
+import Dialog from 'primevue/dialog';
+const $toast = useToast();
+
+const categorias = ref<PaginacaoType>({ data: [] });
+const categoriasFiltradas = ref<Array<CategoriaItem>>([]);
+
+const categoria = ref<CategoriaItem>({ nome: '', descricao: '' });
+const categoriaPai = ref<CategoriaItem | undefined>({ nome: '', descricao: '' });
+
+
+const modo = ref("cadastrar");
+const visible = ref(false);
+
+
+const mudarExibirModal = () => {
+    visible.value = !visible.value;
+}
+
+const cadastrarCategoriaSemPai = () => {
+    modo.value = 'cadastrar';
+    categoriaPai.value = undefined;
+    categoria.value = { nome: '', descricao: '' };
+    visible.value = true;
+}
+
+const getResults = async (page = 1, perPage=5) => {
+    try {
+        const response = await fetch(`/api/categorias?page=${page}&perPage=${perPage}`);
+        categorias.value = await response.json();
+    } catch (e) {
+        console.log('Error');
+    }
+
+}
+getResults();
+
+
+const cadastrarCategoria = async () => {
+    try {
+        const response = await axios.post('/api/categoria', categoria.value);
+
+        if (response.status >= 200 && response.status < 300) {
+            $toast.success('Categoria cadastrada!');
+        }
+        //Adicionando a subcategoria ao pai assim que ela é criada
+        //sem fazer uma busca completa no banco de dados
+        //
+        if (categoriaPai.value != undefined) {
+            categoriaPai?.value?.sub_categorias?.push(response.data);
+        } else {
+            getResults();
+        }
+
+    } catch (e) {
+        
+        $toast.error('Erro ao realizar a requisição!');
+    }
+}
+
+const atualizarCategoria = async () => {
+    try {
+
+
+        const response = await axios.put(`/api/categoria/${categoria?.value.id}`, categoria.value);
+        if (response.status >= 200 && response.status < 300) {
+            $toast.success('Categoria atualizada!');
+        }
+    } catch (e) {
+        $toast.error('Erro ao realizar a requisição!');
+    }
+
+}
+
+
+const submit = async () => {
+
+    if (modo.value == 'cadastrar') {
+        cadastrarCategoria();
+    } else if (modo.value == 'atualizar') {
+        atualizarCategoria();
+    }
+
+    visible.value = false;
+}
+
+function removerObjetoPorId(objeto: any, id: Number) {
+
+return objeto.map((categoria: CategoriaItem) => {
+
+    if (categoria.id === id) {
+        return null; // Remove o objeto atual
+    }
+
+    if (categoria.sub_categorias && categoria.sub_categorias.length > 0) {
+        // Percorre os filhos e remove o categoria com o ID especificado
+        categoria.sub_categorias = removerObjetoPorId(categoria.sub_categorias, id);
+    }
+
+    return categoria;
+}).filter(Boolean);
+}
+
+const deletarCategoria = async (id: number) => {
+    try {
+
+
+        const response = await axios.delete(`/api/categoria/${id}`);
+        if (response.status >= 200 && response.status < 300) {
+            $toast.success(response.data.message);
+        }
+
+
+        categorias.value.data = removerObjetoPorId(categorias.value.data, id);
+        visible.value = false;
+    } catch (e) {
+        $toast.error('Erro ao realizar a requisição!');
+    }
+}
+
+
+
+
+const mudarModoModal = (tipo: "cadastrar" | "atualizar") => {
+    modo.value = tipo;
+}
+
+
+const mudarCategoria = (cat: CategoriaItem) => {
+    categoria.value = cat;
+}
+
+const mudarCategoriaPai = (cat: CategoriaItem | undefined) => {
+    categoriaPai.value = cat;
+}
+
+
+provide('deletarCategoria', deletarCategoria);
+provide('mudarCategoria', mudarCategoria);
+provide('mudarModoModal', mudarModoModal);
+provide('mudarCategoriaPai', mudarCategoriaPai);
+provide('mudarExibirModal', mudarExibirModal);
+provide('getResults', getResults);
+provide('categoriasFiltradas', categoriasFiltradas);
+
+export type deletarCategoriaType = typeof deletarCategoria;
+export type mudarModoModalType = typeof mudarModoModal;
+export type mudarCategoriaType = typeof mudarCategoria;
+export type mudarCategoriaPaiType = typeof mudarCategoriaPai;
+export type getResultsType = typeof getResults;
+export type mudarExibirModalType = typeof mudarExibirModal;
 
 </script>
 
@@ -10,34 +166,30 @@ import Categorias from '@/components/Categorias.vue';
         <link rel="preconnect" href="https://rsms.me/" />
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     </Head>
-    <div
-        class="flex min-h-screen flex-col items-center bg-[#FDFDFC] p-6 text-[#1b1b18]  lg:justify-center lg:p-8">
-        <header class="not-has-[nav]:hidden mb-6 w-full max-w-[335px] text-sm lg:max-w-4xl">
-            <nav class="hidden items-center justify-end gap-4">
-                <Link :href="route('dashboard')"
-                    class="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a]">
-                Dashboard
-                </Link>
-                <template>
-                    <Link :href="route('login')"
-                        class="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035]">
-                    Log in
-                    </Link>
-                    <Link :href="route('register')"
-                        class="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a]">
-                    Cadastro
-                    </Link>
-                </template>
-            </nav>
+    <div class="flex min-h-screen flex-col items-center bg-[#FDFDFC]">
+        <header class="mb-6 w-full bg-blue-600">
+            <Nav :categorias="categorias.data"/>
         </header>
-        <div
-            class="duration-750 starting:opacity-0 flex w-full items-center justify-center opacity-100 transition-opacity lg:grow">
-            <main class="flex w-full max-w-full overflow-scroll rounded-lg lg:max-w-4xl lg:flex-row ">
-                <Categorias/>  
-            </main>
+        <div class="flex flex-row w-full items-center justify-center lg:grow">
+            <Categorias :categorias="categorias" :categorias-filtradas="categoriasFiltradas"/>
+            <BotaoFlutuante v-on:click="cadastrarCategoriaSemPai" />
+            <Dialog v-model:visible="visible" modal :header="modo=='cadastrar'? 'Cadastrar Sub-Categoria':'Atualizar Categoria'" :style="{ width: '25rem' }">
+                <div class="p-4 md:p-5 space-y-4">
+                    <div class="flex flex-col justify-between w-full gap-y-5">
+                        <input type="text" class="w-full h-8" placeholder="Nome" v-model="categoria.nome">
+                        <input type="text" class="w-full h-8" placeholder="Descrição" v-model="categoria.descricao">
+                    </div>
+
+                </div>
+                <!-- Modal footer -->
+                <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b ">
+                    <button data-modal-hide="default-modal" type="button" v-on:click="submit"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        {{ modo == 'cadastrar' ? 'Cadastrar' : 'Atualizar' }}</button>
+                    <button v-on:click="visible = false"
+                        class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Cancelar</button>
+                </div>
+            </Dialog>
         </div>
-
-        <!-- Main modal -->
-
     </div>
 </template>
