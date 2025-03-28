@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue';
-import 'vue-toast-notification/dist/theme-sugar.css';
 import Categoria from './Categoria.vue';
 import { CategoriaItem, PaginacaoType } from '@/types';
 import Paginator, { PageState } from 'primevue/paginator';

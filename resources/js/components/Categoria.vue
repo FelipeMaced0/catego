@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ItemCategoriaType } from '@/types';
 import { inject, ref } from 'vue';
-import 'vue-toast-notification/dist/theme-sugar.css';
 import type { deletarCategoriaType, mudarCategoriaPaiType, mudarCategoriaType, mudarExibirModalType, mudarModoModalType } from '../pages/Home.vue';
 import SpeedDial from 'primevue/speeddial';
 
