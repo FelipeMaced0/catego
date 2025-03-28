@@ -7,8 +7,8 @@ import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
 import { initializeTheme } from './composables/useAppearance';
-import ToastPlugin from 'vue-toast-notification';
-import 'vue-toast-notification/dist/theme-default.css';
+import ToastService from 'primevue/toastservice';
+
 
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
@@ -36,7 +36,7 @@ createInertiaApp({
         createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
-            .use(ToastPlugin)
+            .use(ToastService)
             .use(PrimeVue, {
                 theme: {
                     preset: Aura

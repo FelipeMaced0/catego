@@ -5,10 +5,13 @@ import Nav from '@/components/Nav.vue';
 import BotaoFlutuante from '@/components/BotaoFlutuante.vue';
 import { CategoriaItem, PaginacaoType } from '@/types';
 import { provide, ref } from 'vue';
-import { useToast } from 'vue-toast-notification';
+import { useToast } from 'primevue/usetoast';
 import axios from 'axios';
 import Dialog from 'primevue/dialog';
-const $toast = useToast();
+import Toast from 'primevue/toast';
+
+
+const toast = useToast();
 
 const categorias = ref<PaginacaoType>({ data: [] });
 const categoriasFiltradas = ref<Array<CategoriaItem>>([]);
@@ -32,7 +35,7 @@ const cadastrarCategoriaSemPai = () => {
     visible.value = true;
 }
 
-const getResults = async (page = 1, perPage=5) => {
+const getResults = async (page = 1, perPage = 5) => {
     try {
         const response = await fetch(`/api/categorias?page=${page}&perPage=${perPage}`);
         categorias.value = await response.json();
@@ -49,7 +52,7 @@ const cadastrarCategoria = async () => {
         const response = await axios.post('/api/categoria', categoria.value);
 
         if (response.status >= 200 && response.status < 300) {
-            $toast.success('Categoria cadastrada!');
+            toast.add({ severity: 'success', summary: 'Sucesso', detail: 'Categoria cadastrada!', life: 3000 });
         }
         //Adicionando a subcategoria ao pai assim que ela é criada
         //sem fazer uma busca completa no banco de dados
@@ -61,8 +64,7 @@ const cadastrarCategoria = async () => {
         }
 
     } catch (e) {
-        
-        $toast.error('Erro ao realizar a requisição!');
+        toast.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao realizar a requisição!', life: 3000 });
     }
 }
 
@@ -72,10 +74,10 @@ const atualizarCategoria = async () => {
 
         const response = await axios.put(`/api/categoria/${categoria?.value.id}`, categoria.value);
         if (response.status >= 200 && response.status < 300) {
-            $toast.success('Categoria atualizada!');
+            toast.add({ severity: 'success', summary: 'Sucesso', detail: 'Categoria atualizada!', life: 3000 });
         }
     } catch (e) {
-        $toast.error('Erro ao realizar a requisição!');
+        toast.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao atualizar!', life: 3000 });
     }
 
 }
@@ -94,19 +96,19 @@ const submit = async () => {
 
 function removerObjetoPorId(objeto: any, id: Number) {
 
-return objeto.map((categoria: CategoriaItem) => {
+    return objeto.map((categoria: CategoriaItem) => {
 
-    if (categoria.id === id) {
-        return null; // Remove o objeto atual
-    }
+        if (categoria.id === id) {
+            return null; // Remove o objeto atual
+        }
 
-    if (categoria.sub_categorias && categoria.sub_categorias.length > 0) {
-        // Percorre os filhos e remove o categoria com o ID especificado
-        categoria.sub_categorias = removerObjetoPorId(categoria.sub_categorias, id);
-    }
+        if (categoria.sub_categorias && categoria.sub_categorias.length > 0) {
+            // Percorre os filhos e remove o categoria com o ID especificado
+            categoria.sub_categorias = removerObjetoPorId(categoria.sub_categorias, id);
+        }
 
-    return categoria;
-}).filter(Boolean);
+        return categoria;
+    }).filter(Boolean);
 }
 
 const deletarCategoria = async (id: number) => {
@@ -115,14 +117,14 @@ const deletarCategoria = async (id: number) => {
 
         const response = await axios.delete(`/api/categoria/${id}`);
         if (response.status >= 200 && response.status < 300) {
-            $toast.success(response.data.message);
+            toast.add({ severity: 'success', summary: 'Sucesso', detail: response.data.message });
         }
 
 
         categorias.value.data = removerObjetoPorId(categorias.value.data, id);
         visible.value = false;
     } catch (e) {
-        $toast.error('Erro ao realizar a requisição!');
+        toast.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao realizar a requisição!' });
     }
 }
 
@@ -168,12 +170,14 @@ export type mudarExibirModalType = typeof mudarExibirModal;
     </Head>
     <div class="flex min-h-screen flex-col items-center bg-[#FDFDFC]">
         <header class="mb-6 w-full bg-blue-600">
-            <Nav :categorias="categorias.data"/>
+            <Nav :categorias="categorias.data" />
         </header>
         <div class="flex flex-row w-full items-center justify-center lg:grow">
-            <Categorias :categorias="categorias" :categorias-filtradas="categoriasFiltradas"/>
+            <Categorias :categorias="categorias" :categorias-filtradas="categoriasFiltradas" />
             <BotaoFlutuante v-on:click="cadastrarCategoriaSemPai" />
-            <Dialog v-model:visible="visible" modal :header="modo=='cadastrar'? 'Cadastrar Sub-Categoria':'Atualizar Categoria'" :style="{ width: '25rem' }">
+            <Dialog v-model:visible="visible" modal
+                :header="modo == 'cadastrar' ? 'Cadastrar Sub-Categoria' : 'Atualizar Categoria'"
+                :style="{ width: '25rem' }">
                 <div class="p-4 md:p-5 space-y-4">
                     <div class="flex flex-col justify-between w-full gap-y-5">
                         <input type="text" class="w-full h-8" placeholder="Nome" v-model="categoria.nome">
@@ -192,4 +196,5 @@ export type mudarExibirModalType = typeof mudarExibirModal;
             </Dialog>
         </div>
     </div>
+    <Toast />
 </template>
